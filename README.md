@@ -6,7 +6,7 @@ This project is to show the crud operation using Laravel. This operation is to r
 ## Setup Project
 
 1. **Clone the Repository**
-    - Clone the project repository from the following link: [https://github.com/noone-556/skc-omr.git](https://github.com/noone-556/skc-omr.git)
+    - Clone the project repository from the following link: https://github.com/noone-556/sample-crud-project--aliff-..git
 
 
 2. Start xampp (apache and mysql)
