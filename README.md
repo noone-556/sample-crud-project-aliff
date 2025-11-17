@@ -17,25 +17,33 @@ This project is to show the crud operation using Laravel. This operation is to r
 
 4. Run `composer install`
     - If getting an error `composer not found` then you need to manually download the composer at this link https://getcomposer.org/download/  
-    - After finish then restart your notebook and run back the command.
-    -if succeed can proceed below, if not check environment variables 
+
+    - After finish install, then restart your notebook and run back the command.
+
+    - If succeed can proceed below, if not check environment variables and check user variables. And then check path, click it then  make sure this path `C:\Users\{your user name}\AppData\Roaming\Composer\vendor\bin` is exist. 
 
 5. Run `php artisan key:generate`
+    - Will generate APP_KEY at env
 
 6. Run `php artisan create:db`
+    - Create database at mysql
 
 7. Run `php artisan migrate` 
+    - Generate table for the database
 
 8. Run `php artisan serve`
+    - Run the program
 
 
 ### Download xampp 8.1.25
 
+
 ## Fresh install?
 1. Download at this link https://www.apachefriends.org/download.html and choose PHP 8.1.25.
 
-# Have xampp but different php version?
 
+
+# Have xampp but different php version?
 1. After git clone, there is folder `apache folder 8.1.25` which have folder php and apache version 8.1.25.
 2. Use this folder at your xampp root folder.
 3. You can rename the php and apache folder inside xampp, and replace with the one I provided.  
