@@ -30,7 +30,8 @@
                 <tr>
                     <td>ID Pekerja:</td>
                     <td>
-                        <input type="text" class="form-control" id="empID" name="empID" value="" />
+                        <input type="text" class="form-control" id="empID" name="empID" 
+                            onkeyup="this.value = this.value.toUpperCase();" required/>
                     </td>
                 </tr>
 
@@ -51,7 +52,8 @@
                 <tr>
                     <td>Jawatan:</td>
                     <td>
-                        <input type="text" class="form-control" id="roleEMP" name="roleEMP" value="" />
+                        <input type="text" class="form-control" id="roleEMP" name="roleEMP" 
+                                onkeyup="this.value = this.value.toUpperCase();" required/>
                     </td>
                 </tr>
 
@@ -69,7 +71,7 @@
                 <tr>
                     <td>Tarikh Mula:</td>
                     <td>
-                        <input type="date" class="form-control" id="startDate" name="startDate" value="" />
+                        <input type="date" class="form-control" id="startDate" name="startDate" value="" required/>
                     </td>
                 </tr>
                 <tr>

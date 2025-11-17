@@ -163,9 +163,9 @@
 @endsection
 
 @push('scripts')
-<!-- daftar pekerja -->
-<script>
 
+<script>
+//for prop jenis kontrak off tarikh akhir (daftarUsers.blade.php)
 $(document).ready(function() {
     $('#typeCon').on('change', function() {
         var contractType = $(this).val();
@@ -186,19 +186,46 @@ $(document).ready(function() {
             $('#endDate').css('cursor', 'not-allowed');
         }
     });
-    
     $('#typeCon').trigger('change');
 });
 
-
+//kemaskini disable end date tetap (kemaskiniMaklumat.blade.php)
 $(document).ready(function() {
-    console.log("jQuery is loaded!");
-    
-    $("#formMaklumatPekerja").on("submit", function() {
+    $('#eType').on('change', function() {
+        var contractType = $(this).val();
         
+        if (contractType === 'TETAP') {
+            $('#eEnd').prop('disabled', true);
+            $('#eEnd').val(''); // Clear the value
+            // $('#eEnd').css('background-color', '#e9ecef'); 
+            $('#eEnd').css('cursor', 'not-allowed');
+        } else if (contractType === 'KONTRAK') {
+            $('#eEnd').prop('disabled', false);
+            $('#eEnd').css('background-color', ''); 
+            $('#eEnd').css('cursor', '');
+        } 
+    });
+    $('#eType').trigger('change');
+});
+
+/** Untuk check tarikh akhir tidak kurang daripada tarikh mula */
+$("#startDate").on("change", function () {
+
+    var start = $(this).val();
+    $("#endDate").attr("min", start);
+
+});
+
+// <!-- daftar pekerja -->
+$(document).ready(function() {
+    // console.log("jQuery is loaded!");
+    
+    $("#formMaklumatPekerja").on("submit", function (e) {
+        e.preventDefault(); // prevent double submission
+
         var form = this;
         var email = $("#empEmail").val();
-        // console.log("Submitting data:", data);
+        var empID = $("#empID").val();
 
         $.ajaxSetup({
             headers: {
@@ -206,43 +233,88 @@ $(document).ready(function() {
             }
         });
 
-        $.ajax({
-            url:'/semak-email',
-            type:'GET',
-            data: {EMAIL: email},
-            async: true,
-            dataType:'JSON',
-            success:function(data) {
+        try {
 
-                if(data > 0) {
+            // CHECK EMPLOYEE ID
+            $.ajax({
+                url: '/semak-idpekerja',
+                type: 'GET',
+                data: { EMPID: empID },
+                dataType: 'JSON',
+                success: function (data) {
+                    try {
 
-                toastr.error("Email telah digunakan oleh pengguna lain!");
-                return false;
-
-                } else {
-
-                    var formData = $(form).serialize();
-                    console.log("Submitting data:", formData);
-            
-                    $.ajax({
-                        url: '/daftar-pekerja',
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            console.log("Success:", response);
-                            alert("Data berjaya disimpan!");
-                            $('#daftarModal').modal('hide');
-                            location.reload();
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error:", xhr.responseText);
-                            alert("Error: " + error);
+                        if (data > 0) {
+                            toastr.error("Nombor ID pekerja telah digunakan.");
+                            return;
                         }
-                    });
+
+                        // CHECK EMAIL
+                        $.ajax({
+                            url: '/semak-email',
+                            type: 'GET',
+                            data: { EMAIL: email },
+                            dataType: 'JSON',
+                            success: function (data) {
+                                try {
+
+                                    if (data > 0) {
+                                        toastr.error("Email telah digunakan oleh pengguna lain!");
+                                        return;
+                                    }
+
+                                    // SUBMIT FORM
+                                    var formData = $(form).serialize();
+
+                                    $.ajax({
+                                        url: '/daftar-pekerja',
+                                        type: 'POST',
+                                        data: formData,
+                                        success: function (response) {
+                                            toastr.success("Data berjaya disimpan!");
+                                            $('#daftarModal').modal('hide');
+                                            location.reload();
+                                        },
+
+                                        error: function (xhr, status, error) {
+                                            console.error("Form Submit Error:", xhr.responseText);
+                                            toastr.error("Ralat ketika menyimpan data!");
+                                        }
+
+                                    });
+
+                                } catch (innerErr) {
+                                    console.error("Email check try/catch error:", innerErr);
+                                    toastr.error("Ralat semasa menyemak email.");
+                                }
+                            },
+
+                            error: function (xhr, status, error) {
+                                console.error("Email check Ajax error:", xhr.responseText);
+                                toastr.error("Tidak dapat menyemak email.");
+                            }
+                        });
+
+                    } catch (innerErr) {
+                        console.error("EMP ID try/catch error:", innerErr);
+                        toastr.error("Ralat semasa menyemak ID pekerja.");
+                    }
+                },
+
+                error: function (xhr, status, error) {
+                    console.error("EMP ID Ajax error:", xhr.responseText);
+                    toastr.error("Tidak dapat menyemak ID pekerja.");
                 }
-            }
-        });
+
+            });
+
+        } catch (e) {
+            console.error("General try/catch error:", e);
+            toastr.error("Ralat tidak dijangka berlaku.");
+        }
+
     });
+
 });
 </script>
 
@@ -290,9 +362,18 @@ $(function(){
             setValArray('#tableLihatMaklumat #EMPCONTYPE', typeCon);
             setValArray('#tableLihatMaklumat #EMPSTARTDATE', startdate);
             setValArray('#tableLihatMaklumat #EMPENDDATE', endDate);
-            setValArray('#tableLihatMaklumat #EMPPHONE', phone);
-            setValArray('#tableLihatMaklumat #EMPSTATUS', status);
             
+            if (phone == null) {
+                setValArray('#tableLihatMaklumat #EMPPHONE', '-');
+            } else {
+                setValArray('#tableLihatMaklumat #EMPPHONE', phone);
+            }
+
+            if (status == 1) {
+                setValArray('#tableLihatMaklumat #EMPSTATUS', 'AKTIF');
+            } else {
+                setValArray('#tableLihatMaklumat #EMPSTATUS', 'TIDAK AKTIF');
+            }
 
 
 
@@ -330,36 +411,38 @@ $(function(){
                     var email = disp['email'];
                     var position = disp['positions'];
                     var typeCon = disp['contract_type'];
-                    console.log("typeCon", typeCon)
                     var startdate = disp['start_date'];   //YYYY-MM-DD
                     var endDate = disp['end_date'];
-                    console.log("date", startdate)
                     var phone = disp['phone'];
                     var status = disp['status'];
-                    
+                    var $modal = $('#kemaskiniModal');
 
                     $("#eNama").val(nama);
                     $("#eidEMP").val(empID);
                     $("#ePos").val(position);
                     $("#eType").val(typeCon);
                     $("#eStart").val(startdate);
-                    $("#eEnd").val(endDate);
-                    $("#eEmail").val(email);
-                    if (status == 1) {
-                        $("#eStatus").val('Aktif');
+                     $("#eEmail").val(email);
+
+                    if (endDate == null) {
+                        $("#eEnd").val(endDate);
                     } else {
-                        $("#eStatus").val('Tidak Aktif');
+                        $("#eEnd").val(endDate);
                     }
 
+                    if (status == 1) {
+                        // $("#eStatus").val('Aktif');
+                        $modal.find('#eStatus').prop('checked', true);
+                        $modal.find('#eStatusText').text('Aktif');
+                    } else {
+                        $modal.find('#eStatus').prop('checked', false);
+                        $modal.find('#eStatusText').text('Tidak Aktif');
+                    }
 
                     $('#kemaskiniModal').modal('show');
-
                     
                 }
-
             })        
-
-            
         });
     }); //end paparanKemaskini
 
@@ -499,14 +582,27 @@ $(function(){
     // Email regex
     var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
-    if (inputText.value.match(mailformat)) {
-        inputText.setCustomValidity(""); // valid → clear error
-        return true;
+        if (inputText.value.match(mailformat)) {
+            inputText.setCustomValidity(""); // valid → clear error
+            return true;
 
-    } else {
-        inputText.setCustomValidity("Sila masukkan format emel yang betul"); 
-        return false;
+        } else {
+            inputText.setCustomValidity("Sila masukkan format emel yang betul"); 
+            return false;
+        }
     }
-}
+
+    //to change text at kemaskini status
+    $(document).ready(function() {
+        $('#eStatus').change(function() {
+            if ($(this).is(':checked')) {
+                $('#eStatusText').text('Aktif');
+                // $('#is_active').val('1');
+            } else {
+                $('#eStatusText').text('Tidak Aktif');
+                // $('#is_active').val('0');
+            }
+        });
+    });
 </script>
 @endpush

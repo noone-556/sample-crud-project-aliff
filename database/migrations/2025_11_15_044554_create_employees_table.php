@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->string('contract_type');
             $table->string('phone')->nullable();
-            $table->tinyInteger('status');
+            $table->enum('status', ['0', '1'])->default('1');
             $table->timestamps();
         });
     }

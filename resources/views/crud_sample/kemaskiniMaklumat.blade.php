@@ -58,8 +58,13 @@
             </tr>
             <tr>
                 <td>Status:</td>
-                <td colspan="2" style="width:70%">
-                <input type="text" class="form-control-plaintext form-sm" id="eStatus" name="eStatus" value="" readonly/>
+                <td colspan="2" style="width:70%" id="statusDaerah">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="eStatus">
+                        <b><label class="form-check-label" for="eStatus" id="eStatusText">
+                            Tidak Aktif
+                        </label></b>
+                    </div>
                 </td>
             </tr>
             <tr>

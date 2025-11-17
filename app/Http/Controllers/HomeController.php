@@ -74,6 +74,16 @@ class HomeController extends Controller
         return $emailUser;
     }
 
+    public function semakIDPekerja(Request $request){
+
+        $empID = $request['EMPID'];
+
+        // Check if email exists BUT ignore current user
+        $idUser = Employee::where('empID', $empID)->count();
+
+        return $idUser;
+    }
+
     public function updateMaklumat(Request $request){
         $input = $request->all();
 
@@ -81,15 +91,29 @@ class HomeController extends Controller
         $email = $input['eEmail'];
         $eType = $input['eType'];
         $eStart = $input['eStart'];
-        $eEnd = $input['eEnd'];
+        $eEnd = $input['eEnd'] ?? NULL;
+
+        if ($eType == "KONTRAK") {
     
-        $user = Employee::where('empID', $eidEMP)->update([
-                'email' =>  $email,
-                'contract_type' => $eType,
-                'start_date' => $eStart,
-                'end_date' => $eEnd,
-                'updated_at' => NOW(),
+            $user = Employee::where('empID', $eidEMP)->update([
+                    'email' =>  $email,
+                    'contract_type' => $eType,
+                    'start_date' => $eStart,
+                    'end_date' => $eEnd,
+                    'updated_at' => NOW(),
             ]);
+
+        } else {
+
+            $user = Employee::where('empID', $eidEMP)->update([
+                    'email' =>  $email,
+                    'contract_type' => $eType,
+                    'start_date' => $eStart,
+                    'end_date' => NULL,
+                    'updated_at' => NOW(),
+            ]);
+
+        }
 
         return response()->json(['success' => 'Data Submitted Successfully']);
     }

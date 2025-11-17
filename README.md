@@ -5,7 +5,7 @@ This project is to show the crud operation using Laravel. This operation is to r
 ## Setup Project
 
 1. **Clone the Repository**
-    - Clone the project repository from the following link: https://github.com/noone-556/sample-crud-project--aliff-..git
+    - Clone the project repository from the following link: https://github.com/noone-556/sample-crud-project-aliff.git
 
 2. Start xampp (apache and mysql)
 
@@ -25,7 +25,14 @@ This project is to show the crud operation using Laravel. This operation is to r
 
 6. Run `php artisan serve`
 
+
 ### Download xampp 8.1.25
 
-1. Need to have php 8.1 and above
-2. If you have version below 8.1, change php and apache folder at xammp folder to 8.1.25 and above
+## Fresh install?
+1. Download at this link https://www.apachefriends.org/download.html and choose PHP 8.1.25.
+
+# Have xampp but different php version?
+
+1. After git clone, there is folder `apache folder 8.1.25` which have folder php and apache version 8.1.25.
+2. Use this folder at your xampp root folder.
+3. You can rename the php and apache folder inside xampp, and replace with the one I provided.  

@@ -24,6 +24,8 @@ Route::get('/disp-maklumat', 'HomeController@getMaklumat');
 
 Route::get('/semak-email', 'HomeController@semakEmail');
 
+Route::get('/semak-idpekerja', 'HomeController@semakIDPekerja');
+
 Route::post('/kemaskini-maklumat', 'HomeController@updateMaklumat');
 
 Route::delete('/padam-maklumat/{id}', 'HomeController@padamMaklumat');
