@@ -7,18 +7,22 @@ use App\Models\Employee;
 
 class HomeController extends Controller
 {
+    //to retrieve all information of the register employee 
     public function dashboard() 
     {
         $list_employees = Employee::all();
-
+        
+        //pass list_employees to dashboard.blade.php so it can be extracted
         return view('dashboard')->with(compact('list_employees'));
     }
 
+    //return modal view for daftar employee
     public function daftarRed() 
     {
         return view('crud_sample.daftarUsers');
     }
 
+    //function to save rekod pekerja to mysql
     public function daftar_pekerja(Request $request) 
     {
         $input = $request->all();
@@ -35,6 +39,7 @@ class HomeController extends Controller
         $app->phone = $input['empPhone'];
         $app->start_date = $input['startDate'];
         
+        // if tetap then end date can be null, else (kontrak) then end date will be required
         if ($input['typeCon'] == "TETAP") {
             $app->end_date = null;
         } else {
@@ -45,22 +50,24 @@ class HomeController extends Controller
 
         $save = $app->save();
 
-    return response()->json([
-        'success' => $save,
-        'message' => $save ? 'Data berjaya disimpan!' : 'Gagal menyimpan data!',
-        'data' => $input
-    ]);
+        return response()->json([
+            'success' => $save,
+            'message' => $save ? 'Data berjaya disimpan!' : 'Gagal menyimpan data!',
+            'data' => $input
+        ]);
     }
 
+    //to retrieve maklumat and display at Lihat Maklumat Modal based on id for each user
     public function getMaklumat(Request $request)
     {
         $id = $request['id'];
 
         $list_data = Employee::where('id', $id)->get();
         
-        return  $list_data;
+        return $list_data;
     }
 
+    //semak email so one email can be use for one user only
     public function semakEmail(Request $request){
 
         $email = $request['EMAIL'];
@@ -74,6 +81,7 @@ class HomeController extends Controller
         return $emailUser;
     }
 
+    //semak employee id so one id can be use for one user only
     public function semakIDPekerja(Request $request){
 
         $empID = $request['EMPID'];
@@ -84,6 +92,7 @@ class HomeController extends Controller
         return $idUser;
     }
 
+    //kemaskini maklumat based on what value change 
     public function updateMaklumat(Request $request){
         $input = $request->all();
 
@@ -92,8 +101,9 @@ class HomeController extends Controller
         $eType = $input['eType'];
         $eStart = $input['eStart'];
         $eEnd = $input['eEnd'] ?? NULL;
-        $eStatus = $input['eStatus'] ?? 0; // Default to 0 if not provided
+        $eStatus = $input['eStatus']; 
 
+        //prepare data that will be updated
         $updateData = [
             'email' => $email,
             'contract_type' => $eType,
@@ -103,11 +113,13 @@ class HomeController extends Controller
             'updated_at' => NOW(),
         ];
 
+        // updates the selected field based on unique employee id
         Employee::where('empID', $eidEMP)->update($updateData);
 
         return response()->json(['success' => 'Data Submitted Successfully']);
     }
 
+    //delete maklumat based on id
     public function padamMaklumat($id){
 
         $employee = Employee::find($id);

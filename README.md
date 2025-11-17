@@ -47,3 +47,27 @@ This project is to show the crud operation using Laravel. This operation is to r
 1. After git clone, there is folder `apache folder 8.1.25` which have folder php and apache version 8.1.25.
 2. Use this folder at your xampp root folder.
 3. You can rename the php and apache folder inside xampp, and replace with the one I provided.  
+
+
+### Approach
+
+- Started by creating a database at app/Command/CreateDatabase.php to create database at MySQL.
+
+- Then designing database schema by using migrations.
+
+- Created laravel models, controller and routes to handle CRUD operations.
+
+- The frontend using blade templates with bootstrap and css for styling.
+
+- Ajax was used for fetch, insert, update and delete record.
+
+- Using datatables with pagination and search.
+
+
+## Challenges
+
+- Ensure proper validation for date fields and contract types required extra checks because there is insert and update operations. Both operation need to be same so the submit value will not be in conflict during backend process
+
+- To handle delete operations so it can delete based on id provided and not other record.
+
+- 

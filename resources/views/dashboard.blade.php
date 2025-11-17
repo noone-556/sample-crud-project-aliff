@@ -1,6 +1,30 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    /* Add spacing inside table cells */
+    #tableSenarai th {
+        background-color: gray;
+        padding: 12px 15px;
+    }
+
+    #tableSenarai thead tr {
+        height: 50px; /* Adjust as needed */
+        margin-top:50px;
+    }
+
+    #tableSenarai td {
+        padding: 12px 15px; /* 12px top/bottom, 15px left/right */
+        
+    }
+
+    /* Optional: slightly round the corners of the table */
+    #tableSenarai {
+        border-radius: 6px;
+        overflow: hidden;
+    }
+</style>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
@@ -23,8 +47,8 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="tableSenarai" width="100%" cellspacing="0">
-                            <thead>
+                        <table class="table table-bordered table-striped" id="tableSenarai" width="100%" cellspacing="0">
+                            <thead style = "background-color: gray;">
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
@@ -35,8 +59,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- $list_employees dari Homecontroller -->
+                                <!-- $list_employees dari Homecontroller (function dashboard) -->
                                 <?php $count = 0;?>
+                                <!-- using forelse because it can handle looping and empty value -->
                                 @forelse($list_employees as $app)
                                 <tr>
                                     <td>{{ ++$count }}</td>
@@ -77,7 +102,7 @@
     </div>
 </div>
 
-<!-- Modal daftar -->
+<!-- Modal daftar pekerja-->
 <div class="modal fade" id="daftarModal" tabindex="-1" role="dialog" aria-labelledby="daftarModalTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -106,7 +131,7 @@
       </div>
 
       <div class="modal-body">
-         <!-- Load your daftarUser page content here -->
+         <!-- Load your lihatMaklumat page content here -->
           @include('crud_sample.lihatMaklumat')
       </div>
     </div>
@@ -124,7 +149,7 @@
       </div>
 
       <div class="modal-body">
-         <!-- Load your daftarUser page content here -->
+         <!-- Load your kemaskiniMaklumat page content here -->
           @include('crud_sample.kemaskiniMaklumat')
       </div>
     </div>
@@ -158,11 +183,9 @@
     </div>
   </div>
 </div>
-
 @endsection
 
 @push('scripts')
-
 <script>
 //for prop jenis kontrak off tarikh akhir (daftarUsers.blade.php)
 $(document).ready(function() {
@@ -203,16 +226,25 @@ $(document).ready(function() {
             $('#eEnd').css('cursor', '');
         } 
     });
-    // $('#eType').trigger('change');
 });
 
-/** Untuk check tarikh akhir tidak kurang daripada tarikh mula */
+/** Untuk check tarikh akhir tidak kurang daripada tarikh mula (daftar)*/
 $("#startDate").on("change", function () {
 
     var start = $(this).val();
     $("#endDate").attr("min", start);
 
 });
+
+/** Untuk check tarikh akhir tidak kurang daripada tarikh mula (kemaskini)*/
+$(document).on('shown.bs.modal', '#kemaskiniModal', function() {
+    var startDate = $("#eStart").val(); // Get value loaded from backend
+    if (startDate) {
+        $("#eEnd").attr("min", startDate); // Set minimum allowed end date
+    }
+
+});
+
 
 // <!-- form daftar pekerja (daftarUsers.blade.php)-->
 $(document).ready(function() {
@@ -558,13 +590,7 @@ $(function(){
 
 <script>
 
-    function toMY(dateStr) {
-        if (!dateStr) return "";
-        const [y, m, d] = dateStr.split("-");
-        return `${d}/${m}/${y}`;
-    }
-
-    //to make the input editable
+    //to make the kemaskini input display in database format
     $("#eStart, #eEnd").on("focus", function () {
         let val = $(this).val();
 
@@ -596,8 +622,8 @@ $(function(){
         return newDate;
     }
     
-    
-    function setValArray(tableid, arrval){ // Set value dari table yang mempunyai array.
+    // Set value dari table yang mempunyai array.
+    function setValArray(tableid, arrval){ 
         $(tableid).html(arrval);
     }
 
@@ -627,6 +653,20 @@ $(function(){
                 $('#eStatusText').text('Tidak Aktif');
                 $('#eStatus').val('0');
             }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#tableSenarai').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "pageLength": 5, 
+            "lengthMenu": [ [5, 10, 15], [5, 10, 15] ], // options in "Show entries"
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true
         });
     });
 </script>
